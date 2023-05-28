@@ -15,13 +15,14 @@ const client = new tmi_js_1.default.Client({
     channels: ["chap_gg"],
 });
 client.connect();
-const wait = (time) => { };
-client.on("message", (channel, tags, message, self) => {
+const wait = (time) => new Promise((r) => setTimeout(r, time));
+client.on("message", async (channel, tags, message, self) => {
     if (self)
         return;
     if (/^\s*👇.*👇\s*$/gm.test(message)) {
         const phrasesPath = path_1.default.join(__dirname, "../phrases.json");
         if ((0, fs_1.existsSync)(phrasesPath)) {
+            await wait(Math.floor(Math.random() * 3000 + 500));
             const phrases = JSON.parse((0, fs_1.readFileSync)(phrasesPath, "utf8"));
             phrases.push(message);
             (0, fs_1.writeFileSync)(phrasesPath, JSON.stringify(phrases));
