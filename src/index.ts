@@ -21,11 +21,16 @@ client.on("message", async (channel, tags, message, self) => {
 	if (/^\s*👇.*👇\s*$/gm.test(message)) {
 		const phrasesPath = path.join(__dirname, "../phrases.json");
 		if (existsSync(phrasesPath)) {
-			await wait(Math.floor(Math.random() * 3000 + 500));
-			const phrases = JSON.parse(readFileSync(phrasesPath, "utf8"));
+			await wait(Math.floor(Math.random() * 3000 + 1000));
+			const phrases: Array<string> = JSON.parse(
+				readFileSync(phrasesPath, "utf8"),
+			);
+			if (phrases.includes(message.trim())) return;
 			phrases.push(message);
 			writeFileSync(phrasesPath, JSON.stringify(phrases));
 		}
-		client.say(channel, "i");
+		if (Math.floor(Math.random() * 100) <= 50) {
+			client.say(channel, "i");
+		}
 	}
 });
