@@ -68,9 +68,8 @@ client.on("message", async (channel, tags, message, self) => {
 		if (Math.floor(Math.random() * 100) <= 75) {
 			client.say(channel, "i");
 		}
-	} else if (
-		/(?:(?:[\wÀ-ÿ'"-,;]+\s*)+(?:(?:\p{Emoji}\s*){2,})){2,}/gu.test(message)
-	) {
+	}
+	if (/(?:(?:[\wÀ-ÿ'"-,;]+\s*)+(?:(?:\p{Emoji}\s*){2,})){2,}/gu.test(message)) {
 		wait(Math.floor(Math.random() * 5000) + 1000);
 		client.say(channel, message);
 	}
