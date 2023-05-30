@@ -7,7 +7,7 @@ const tmi_js_1 = __importDefault(require("tmi.js"));
 const fs_1 = require("fs");
 const path_1 = __importDefault(require("path"));
 const client = new tmi_js_1.default.Client({
-    options: { debug: true },
+    options: { debug: false },
     identity: {
         username: "xxXChapLoverXxx",
         password: "oauth:e0q5bo74y1k12t7cogzqzr4tvlf6nh",
@@ -61,4 +61,5 @@ client.on("message", async (channel, tags, message, self) => {
     else if (/(?:(?:[\wÀ-ÿ'"-,;]+\s*)+(?:(?:\p{Emoji}\s*){2,})){2,}/gu.test(message)) {
         wait(Math.floor(Math.random() * 5000) + 1000);
     }
+    console.log(`<${tags["display-name"]}>: ${message}`);
 });

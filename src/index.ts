@@ -3,7 +3,7 @@ import { existsSync, writeFileSync, readFileSync } from "fs";
 import path from "path";
 
 const client = new tmi.Client({
-	options: { debug: true },
+	options: { debug: false },
 	identity: {
 		username: "xxXChapLoverXxx",
 		password: "oauth:e0q5bo74y1k12t7cogzqzr4tvlf6nh",
@@ -71,4 +71,6 @@ client.on("message", async (channel, tags, message, self) => {
 	) {
 		wait(Math.floor(Math.random() * 5000) + 1000);
 	}
+
+	console.log(`<${tags["display-name"]}>: ${message}`);
 });
