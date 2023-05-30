@@ -15,10 +15,35 @@ const client = new tmi_js_1.default.Client({
     channels: ["chap_gg"],
 });
 client.connect();
+const MAX_CACHE_SIZE = 100; // Maximum number of messages to cache
+const messageCache = new Map();
+const onMessageReceived = (message, client, channel) => {
+    if (messageCache.has(message)) {
+        // Message already exists in the cache, increment the count
+        const count = messageCache.get(message) || 0;
+        messageCache.set(message, count + 1);
+        // Check if the message has been repeated at least three times
+        if (count + 1 >= 3) {
+            wait(1000);
+            client.say(channel, message);
+            // Perform your desired action here
+        }
+    }
+    else {
+        // Message is new, add it to the cache with a count of 1
+        messageCache.set(message, 1);
+        // Limit cache size
+        if (messageCache.size > MAX_CACHE_SIZE) {
+            const oldestMessage = messageCache.keys().next().value;
+            messageCache.delete(oldestMessage);
+        }
+    }
+};
 const wait = (time) => new Promise((r) => setTimeout(r, time));
 client.on("message", async (channel, tags, message, self) => {
     if (self)
         return;
+    onMessageReceived(message, client, channel);
     if (/^\s*👇.*👇\s*$/gm.test(message)) {
         const phrasesPath = path_1.default.join(__dirname, "../phrases.json");
         if ((0, fs_1.existsSync)(phrasesPath)) {
