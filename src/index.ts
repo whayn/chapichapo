@@ -53,11 +53,13 @@ client.on("message", async (channel, tags, message, self) => {
 	if (self) return;
 
 	onMessageReceived(message, client, channel);
-
+	if (/(?:(?:[\wÀ-ÿ'"-,;]+\s*)+(?:(?:\p{Emoji}\s*){2,})){2,}/gu.test(message)) {
+		wait(Math.floor(Math.random() * 5000) + 1000);
+		client.say(channel, message);
+	}
 	if (/^\s*👇.*👇\s*$/gm.test(message)) {
 		const phrasesPath = path.join(__dirname, "../phrases.json");
 		if (existsSync(phrasesPath)) {
-			await wait(Math.floor(Math.random() * 3000 + 1000));
 			const phrases: Array<string> = JSON.parse(
 				readFileSync(phrasesPath, "utf8"),
 			);
@@ -66,11 +68,8 @@ client.on("message", async (channel, tags, message, self) => {
 			writeFileSync(phrasesPath, JSON.stringify(phrases));
 		}
 		if (Math.floor(Math.random() * 100) <= 75) {
+			await wait(Math.floor(Math.random() * 3000 + 1000));
 			client.say(channel, "i");
 		}
-	}
-	if (/(?:(?:[\wÀ-ÿ'"-,;]+\s*)+(?:(?:\p{Emoji}\s*){2,})){2,}/gu.test(message)) {
-		wait(Math.floor(Math.random() * 5000) + 1000);
-		client.say(channel, message);
 	}
 });
