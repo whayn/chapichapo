@@ -28,7 +28,7 @@ client.on("message", async (channel, tags, message, self) => {
 			phrases.push(message);
 			writeFileSync(phrasesPath, JSON.stringify(phrases));
 		}
-		if (Math.floor(Math.random() * 100) <= 50) {
+		if (Math.floor(Math.random() * 100) <= 75) {
 			client.say(channel, "i");
 		}
 	} else if (
