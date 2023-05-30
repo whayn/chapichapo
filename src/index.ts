@@ -17,7 +17,6 @@ const wait = (time: number) => new Promise((r) => setTimeout(r, time));
 
 client.on("message", async (channel, tags, message, self) => {
 	if (self) return;
-
 	if (/^\s*👇.*👇\s*$/gm.test(message)) {
 		const phrasesPath = path.join(__dirname, "../phrases.json");
 		if (existsSync(phrasesPath)) {
@@ -32,5 +31,9 @@ client.on("message", async (channel, tags, message, self) => {
 		if (Math.floor(Math.random() * 100) <= 50) {
 			client.say(channel, "i");
 		}
+	} else if (
+		/(?:(?:[\wÀ-ÿ'"-,;]+\s*)+(?:(?:\p{Emoji}\s*){2,})){2,}/gu.test(message)
+	) {
+		wait(Math.floor(Math.random() * 5000) + 1000);
 	}
 });
