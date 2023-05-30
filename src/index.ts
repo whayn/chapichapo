@@ -48,6 +48,8 @@ const onMessageReceived = (
 const wait = (time: number) => new Promise((r) => setTimeout(r, time));
 
 client.on("message", async (channel, tags, message, self) => {
+	console.log(`<${tags["display-name"]}>: ${message}`);
+
 	if (self) return;
 
 	onMessageReceived(message, client, channel);
@@ -70,7 +72,6 @@ client.on("message", async (channel, tags, message, self) => {
 		/(?:(?:[\wÀ-ÿ'"-,;]+\s*)+(?:(?:\p{Emoji}\s*){2,})){2,}/gu.test(message)
 	) {
 		wait(Math.floor(Math.random() * 5000) + 1000);
+		client.say(channel, message);
 	}
-
-	console.log(`<${tags["display-name"]}>: ${message}`);
 });
