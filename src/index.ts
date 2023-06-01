@@ -1,9 +1,10 @@
 import tmi from "tmi.js";
 import { existsSync, writeFileSync, readFileSync } from "fs";
 import path from "path";
+import { match } from "assert";
 
 const client = new tmi.Client({
-	options: { debug: false },
+	options: { debug: true },
 	identity: {
 		username: "xxXChapLoverXxx",
 		password: "oauth:e0q5bo74y1k12t7cogzqzr4tvlf6nh",
@@ -13,7 +14,7 @@ const client = new tmi.Client({
 
 client.connect();
 
-const MAX_CACHE_SIZE = 100; // Maximum number of messages to cache
+const MAX_CACHE_SIZE = 20; // Maximum number of messages to cache
 
 const messageCache: Map<string, number> = new Map();
 
@@ -48,13 +49,15 @@ const onMessageReceived = (
 const wait = (time: number) => new Promise((r) => setTimeout(r, time));
 
 client.on("message", async (channel, tags, message, self) => {
-	console.log(`<${tags["display-name"]}>: ${message}`);
-
 	if (self) return;
 
 	onMessageReceived(message, client, channel);
-	if (/(?:(?:[\wÀ-ÿ'"-,;]+\s*)+(?:(?:\p{Emoji}\s*){2,})){2,}/gu.test(message)) {
-		wait(Math.floor(Math.random() * 5000) + 1000);
+	if (
+		message.match(
+			/[\uD800-\uDBFF][\uDC00-\uDFFF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDE4F\uDE80-\uDEFF]/g,
+		)?.length! >= 6
+	) {
+		await wait(Math.floor(Math.random() * 5000) + 1000);
 		client.say(channel, message);
 	}
 	if (/^\s*👇.*👇\s*$/gm.test(message)) {

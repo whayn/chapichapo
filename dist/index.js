@@ -7,7 +7,7 @@ const tmi_js_1 = __importDefault(require("tmi.js"));
 const fs_1 = require("fs");
 const path_1 = __importDefault(require("path"));
 const client = new tmi_js_1.default.Client({
-    options: { debug: false },
+    options: { debug: true },
     identity: {
         username: "xxXChapLoverXxx",
         password: "oauth:e0q5bo74y1k12t7cogzqzr4tvlf6nh",
@@ -15,7 +15,7 @@ const client = new tmi_js_1.default.Client({
     channels: ["chap_gg"],
 });
 client.connect();
-const MAX_CACHE_SIZE = 100; // Maximum number of messages to cache
+const MAX_CACHE_SIZE = 20; // Maximum number of messages to cache
 const messageCache = new Map();
 const onMessageReceived = (message, client, channel) => {
     if (messageCache.has(message)) {
@@ -41,12 +41,11 @@ const onMessageReceived = (message, client, channel) => {
 };
 const wait = (time) => new Promise((r) => setTimeout(r, time));
 client.on("message", async (channel, tags, message, self) => {
-    console.log(`<${tags["display-name"]}>: ${message}`);
     if (self)
         return;
     onMessageReceived(message, client, channel);
-    if (/(?:(?:[\wÀ-ÿ'"-,;]+\s*)+(?:(?:\p{Emoji}\s*){2,})){2,}/gu.test(message)) {
-        wait(Math.floor(Math.random() * 5000) + 1000);
+    if (message.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDE4F\uDE80-\uDEFF]/g)?.length >= 6) {
+        await wait(Math.floor(Math.random() * 5000) + 1000);
         client.say(channel, message);
     }
     if (/^\s*👇.*👇\s*$/gm.test(message)) {
