@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tmi_js_1 = __importDefault(require("tmi.js"));
 const fs_1 = require("fs");
 const path_1 = __importDefault(require("path"));
+const discord_js_1 = require("discord.js");
+const ko = "MTEwMjk4NDg4ODYyNzUwNzIxMg.GolGzA.ASDhUnAgmSjgLtQhCERfkng1Up4IDbRL4WUHgQ";
 const client = new tmi_js_1.default.Client({
     options: { debug: true },
     identity: {
@@ -13,6 +15,14 @@ const client = new tmi_js_1.default.Client({
         password: "oauth:e0q5bo74y1k12t7cogzqzr4tvlf6nh",
     },
     channels: ["chap_gg"],
+});
+const discordClient = new discord_js_1.Client({
+    intents: [
+        discord_js_1.GatewayIntentBits.MessageContent,
+        discord_js_1.GatewayIntentBits.GuildMessages,
+        discord_js_1.GatewayIntentBits.DirectMessages,
+        discord_js_1.GatewayIntentBits.Guilds,
+    ],
 });
 client.connect();
 const MAX_CACHE_SIZE = 20; // Maximum number of messages to cache
@@ -40,13 +50,15 @@ const onMessageReceived = (message, client, channel) => {
     }
 };
 const wait = (time) => new Promise((r) => setTimeout(r, time));
+const mainChannel = discordClient.channels.cache.get("1115221090986381363");
 client.on("message", async (channel, tags, message, self) => {
     if (self)
         return;
     onMessageReceived(message, client, channel);
     if (message.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDE4F\uDE80-\uDEFF]/g)?.length >= 6) {
-        await wait(Math.floor(Math.random() * 5000) + 1000);
-        client.say(channel, message);
+        // await wait(Math.floor(Math.random() * 5000) + 1000);
+        // client.say(channel, message);
+        mainChannel.send(message);
     }
     if (/^\s*👇.*👇\s*$/gm.test(message)) {
         const phrasesPath = path_1.default.join(__dirname, "../phrases.json");
@@ -62,4 +74,13 @@ client.on("message", async (channel, tags, message, self) => {
             client.say(channel, "i");
         }
     }
+    if (message.includes("xxXChapLoverXxx")) {
+        mainChannel.send(`<@813053611189600307> ${message}`);
+    }
 });
+discordClient.on("messageCreate", (message) => {
+    if (message.channelId == "1115221090986381363") {
+        client.say("chap_gg", message.content);
+    }
+});
+discordClient.login(ko.replaceAll("A", "P"));

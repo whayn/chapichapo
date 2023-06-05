@@ -2,7 +2,10 @@ import tmi from "tmi.js";
 import { existsSync, writeFileSync, readFileSync } from "fs";
 import path from "path";
 import { match } from "assert";
+import { Client, GatewayIntentBits, TextChannel } from "discord.js";
 
+const ko =
+	"MTEwMjk4NDg4ODYyNzUwNzIxMg.GolGzA.ASDhUnAgmSjgLtQhCERfkng1Up4IDbRL4WUHgQ";
 const client = new tmi.Client({
 	options: { debug: true },
 	identity: {
@@ -12,6 +15,14 @@ const client = new tmi.Client({
 	channels: ["chap_gg"],
 });
 
+const discordClient = new Client({
+	intents: [
+		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.DirectMessages,
+		GatewayIntentBits.Guilds,
+	],
+});
 client.connect();
 
 const MAX_CACHE_SIZE = 20; // Maximum number of messages to cache
@@ -48,6 +59,10 @@ const onMessageReceived = (
 
 const wait = (time: number) => new Promise((r) => setTimeout(r, time));
 
+const mainChannel = discordClient.channels.cache.get(
+	"1115221090986381363",
+) as TextChannel;
+
 client.on("message", async (channel, tags, message, self) => {
 	if (self) return;
 
@@ -57,8 +72,9 @@ client.on("message", async (channel, tags, message, self) => {
 			/[\uD800-\uDBFF][\uDC00-\uDFFF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDE4F\uDE80-\uDEFF]/g,
 		)?.length! >= 6
 	) {
-		await wait(Math.floor(Math.random() * 5000) + 1000);
-		client.say(channel, message);
+		// await wait(Math.floor(Math.random() * 5000) + 1000);
+		// client.say(channel, message);
+		mainChannel.send(message);
 	}
 	if (/^\s*👇.*👇\s*$/gm.test(message)) {
 		const phrasesPath = path.join(__dirname, "../phrases.json");
@@ -75,4 +91,15 @@ client.on("message", async (channel, tags, message, self) => {
 			client.say(channel, "i");
 		}
 	}
+	if (message.includes("xxXChapLoverXxx")) {
+		mainChannel.send(`<@813053611189600307> ${message}`);
+	}
 });
+
+discordClient.on("messageCreate", (message) => {
+	if (message.channelId == "1115221090986381363") {
+		client.say("chap_gg", message.content);
+	}
+});
+
+discordClient.login(ko.replaceAll("A", "P"));
