@@ -33,7 +33,10 @@ const onMessageReceived = (
 	message: string,
 	client: tmi.Client,
 	channel: string,
+	tags: tmi.ChatUserstate,
 ) => {
+	if (tags.mod) return;
+	if (tags.badges?.vip) return;
 	if (messageCache.has(message)) {
 		// Message already exists in the cache, increment the count
 		const count = messageCache.get(message) || 0;
@@ -66,7 +69,7 @@ const mainChannel = discordClient.channels.cache.get(
 client.on("message", async (channel, tags, message, self) => {
 	if (self) return;
 
-	onMessageReceived(message, client, channel);
+	onMessageReceived(message, client, channel, tags);
 	if (
 		message.match(
 			/[\uD800-\uDBFF][\uDC00-\uDFFF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDE4F\uDE80-\uDEFF]/g,

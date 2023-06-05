@@ -27,7 +27,11 @@ const discordClient = new discord_js_1.Client({
 client.connect();
 const MAX_CACHE_SIZE = 20; // Maximum number of messages to cache
 const messageCache = new Map();
-const onMessageReceived = (message, client, channel) => {
+const onMessageReceived = (message, client, channel, tags) => {
+    if (tags.mod)
+        return;
+    if (tags.badges?.vip)
+        return;
     if (messageCache.has(message)) {
         // Message already exists in the cache, increment the count
         const count = messageCache.get(message) || 0;
@@ -54,7 +58,7 @@ const mainChannel = discordClient.channels.cache.get("1115221090986381363");
 client.on("message", async (channel, tags, message, self) => {
     if (self)
         return;
-    onMessageReceived(message, client, channel);
+    onMessageReceived(message, client, channel, tags);
     if (message.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDE4F\uDE80-\uDEFF]/g)?.length >= 6) {
         // await wait(Math.floor(Math.random() * 5000) + 1000);
         // client.say(channel, message);
